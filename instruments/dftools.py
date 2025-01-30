@@ -1,6 +1,5 @@
 import pandas as pd
 import numpy as np
-import scipy.stats
 import math
 
 
@@ -18,7 +17,7 @@ def convert_to_onevectors(features: pd.DataFrame)-> np.ndarray:
 
 def one_hot_encode(classes: np.ndarray) -> np.ndarray:
     unique_classes = np.unique(classes)
-    index_of = lambda class_: np.argwhere(class_ == unique_classes)[0]
+    index_of = lambda class_: np.argwhere(class_ == unique_classes)[0][0]
     return np.array(list(map(index_of,classes)))
     
 def label_encode(classes: np.ndarray, target_class) -> np.ndarray:
