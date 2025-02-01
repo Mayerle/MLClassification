@@ -34,3 +34,17 @@ def split_data(features: np.ndarray, targets:np.ndarray, train_size: float = 0.7
     
     return [x_train,  x_test, y_train,  y_test]
 
+def train_test_split(df: pd.DataFrame, test_size: float = 0.3) -> list[np.ndarray]:
+    test_n   = math.trunc(test_size*df.shape[0])
+    train = df[test_n:]
+    test  = df[:test_n]
+    return [train, test]
+
+def train_validate_test_split(df: pd.DataFrame, test_size: float = 0.3, validate_size: float = 0.3) -> list[np.ndarray]:
+    test_n   = math.trunc(test_size*df.shape[0])
+    validate_n   = math.trunc(test_size*validate_size*df.shape[0])
+    train = df[test_n:]
+    test  = df[:test_n]
+    validate = test[:validate_n]
+    test  = test[validate_n:]
+    return [train, validate, test]
