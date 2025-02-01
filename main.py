@@ -12,6 +12,7 @@ target_column = "Species"
 df = pd.read_csv("dataset/iris.csv").sample(frac=1,random_state=1)
 objects = df[features_columns]
 targets = df[target_column]
+target_labels = targets.unique()
 objects = normalize_features(objects)
 objects = convert_to_onevectors(objects)
 targets = one_hot_encode(targets)
@@ -44,9 +45,27 @@ svm_stats = ClassificationStatistics(y_test,svm_predictions)
 matrix = svm_stats.calculate_confusion_matrix()
 
 #Print results
-print("[Quadric model]")
-print(quadric_stats.calculate_all())
-print("[Logit model]")
-print(logit_stats.calculate_all())
-print("[SVM model]")
-print(svm_stats.calculate_all())
+#print("[Quadric model]")
+#print_all_per_class(quadric_stats.calculate_all_per_class(),target_labels)
+#print("\n\n[Logit model]")
+#print_all_per_class(logit_stats.calculate_all_per_class(),target_labels)
+#print("\n\n[SVM model]")
+#print_all_per_class(svm_stats.calculate_all_per_class(),target_labels)
+
+
+
+print_all(quadric_stats.calculate_all(),"[Quadric model]")
+print_all(logit_stats.calculate_all(),"[Logit model]")
+print_all(svm_stats.calculate_all(),"[SVM model]")
+
+
+
+statistics = {
+        'Quadric': quadric_stats.calculate_all(),
+        'Logit': logit_stats.calculate_all(),
+        'SVM': svm_stats.calculate_all(),
+    }
+
+plot_all(statistics, 2)
+
+plt.show()

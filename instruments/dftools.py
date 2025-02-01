@@ -33,3 +33,4 @@ def split_data(features: np.ndarray, targets:np.ndarray, train_size: float = 0.7
     y_test    = targets[train_n:]
     
     return [x_train,  x_test, y_train,  y_test]
+
