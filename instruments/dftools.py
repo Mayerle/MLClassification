@@ -24,23 +24,30 @@ def label_encode(classes: np.ndarray, target_class) -> np.ndarray:
     index_of = lambda class_: 1 if class_ == target_class else -1
     return np.array(list(map(index_of,classes)))
         
-def split_data(features: np.ndarray, targets:np.ndarray, train_size: float = 0.7) -> list[np.ndarray]:
-    train_n   = math.trunc(train_size*features.shape[0])
-    x_train   = features[:train_n]
-    x_test    = features[train_n:]
+def split_data(features: np.ndarray, targets:np.ndarray, test_size: float = 0.7, validate_size: float = 0.3) -> list[np.ndarray]:
+    test_n   = math.trunc(test_size*features.shape[0])
+    validate_n   = math.trunc(test_size*validate_size*features.shape[0])
     
-    y_train   = targets[:train_n]
-    y_test    = targets[train_n:]
+    x_test     = features[:test_n]
+    x_validate = x_test[validate_n:]
+    x_test     = x_test[:validate_n]
+    x_train    = features[test_n:]
     
-    return [x_train,  x_test, y_train,  y_test]
+    y_test     = targets[:test_n]
+    y_validate = y_test[validate_n:]
+    y_test     = y_test[:validate_n]
+    y_train    = targets[test_n:]
+    
+    
+    return [x_train, x_validate, x_test, y_train, y_validate, y_test]
 
-def train_test_split(df: pd.DataFrame, test_size: float = 0.3) -> list[np.ndarray]:
+def train_test_split(df: type[pd.DataFrame | np.ndarray], test_size: float = 0.3) -> list[pd.DataFrame | np.ndarray]:
     test_n   = math.trunc(test_size*df.shape[0])
     train = df[test_n:]
     test  = df[:test_n]
     return [train, test]
 
-def train_validate_test_split(df: pd.DataFrame, test_size: float = 0.3, validate_size: float = 0.3) -> list[np.ndarray]:
+def train_validate_test_split(df: type[pd.DataFrame | np.ndarray], test_size: float = 0.3, validate_size: float = 0.3) -> type[pd.DataFrame | np.ndarray]:
     test_n   = math.trunc(test_size*df.shape[0])
     validate_n   = math.trunc(test_size*validate_size*df.shape[0])
     train = df[test_n:]
