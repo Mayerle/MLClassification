@@ -37,13 +37,20 @@ class ClassificationStatistics:
         all_count = self.confusion_matrix.T.sum(0)
         return diagonal/all_count
     
-    def calculate_all(self, digits: int = 2) -> list:
+    def calculate_all(self) -> list:
         accuracy   = self.calculate_accuracy()
         precisions = self.calculate_precisions()
         recalls    = self.calculate_recalls()
         precision = float(np.mean(precisions))
         recall = float(np.mean(recalls))
         return [accuracy,precision, recall]
+    def calculate_f_score(self, b: float = 1) -> float:
+        precisions = self.calculate_precisions()
+        recalls    = self.calculate_recalls()
+        precision = float(np.mean(precisions))
+        recall = float(np.mean(recalls))
+        score = (1+b**2)*precision*recall/((b**2)*precision+recall)
+        return score
     
     def calculate_all_per_class(self) -> list:
         precisions = self.calculate_precisions()

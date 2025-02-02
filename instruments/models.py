@@ -121,7 +121,6 @@ class SVMCModel(ClassificationModel):
             predictions[i] = best_prediction
         return predictions
 
-
 class KNNClassificationModel(ClassificationModel):
     def __init__(self, neighbors_n:int = 3, norm: str = "l2"):
         if(norm == "l1"):
@@ -129,24 +128,12 @@ class KNNClassificationModel(ClassificationModel):
         elif(norm == "l2"):
             self.norm = self.__l2 
         self.neighbors_n = neighbors_n
-            
-    def __l1(self, vector: np.ndarray) -> float:      
-        _sum = 0
-        for i in range(len(vector)-1):
-            _sum += abs(vector[i])
-        return _sum
-    
-    def __l2(self, vector: np.ndarray) -> float:     
-        _sum = 0
-        for i in range(len(vector)-1):
-            _sum += vector[i]**2
-        return _sum 
     
     def fit(self, objects: np.ndarray, targets: np.ndarray):    
         self.train_objects = objects
         self.train_targets = targets    
             
-    def most_frequent(self, arr):
+    def __get_most_frequent(self, arr):
         freq = []
         unique = []
         for x in arr:
@@ -169,7 +156,7 @@ class KNNClassificationModel(ClassificationModel):
     def __get_neighbors(self, distances:np.ndarray, targets: np.ndarray):
         pairs = list(zip(distances, targets))
         pairs.sort(key=lambda x: x[0])
-        return pairs[:self.neighbors_n]
+        return pairs[:self.neighbors]
         
     def predict(self, objects: np.ndarray) -> np.ndarray:
         targets = []
@@ -178,7 +165,7 @@ class KNNClassificationModel(ClassificationModel):
             neighbors = self.__get_neighbors(distances, self.train_targets)
             classes = list(map(lambda x: x[1],neighbors) )
             
-            target = self.most_frequent(classes)
+            target = self.__get_most_frequent(classes)
             targets.append(target)
         return np.array(targets)
     

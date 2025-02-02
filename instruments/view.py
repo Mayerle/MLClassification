@@ -1,5 +1,6 @@
 
 import numpy as np
+import pandas as pd
 import matplotlib.pyplot as plt
             
 def show_confusion_matrix(matrix: np.ndarray, labels: list) -> None:
@@ -32,7 +33,7 @@ def plot_all(statistics: dict, digits: int) -> list:
         statistics_rounded.update({m:[round(k,digits) for k in y]}) 
         
     x = np.arange(len(metrics))  # the label locations
-    width = 0.25 
+    width = 0.15 
     multiplier = 0
 
     fig, axe = plt.subplots(layout='constrained')
@@ -46,6 +47,32 @@ def plot_all(statistics: dict, digits: int) -> list:
     axe.set_ylabel('Metric')
     axe.set_title('Model comparison')
     axe.set_xticks(x + width, metrics)
-    axe.legend(loc='upper left', ncols=3)
+    axe.legend(loc='upper left', ncols=len(metrics))
     axe.set_ylim(0.8, 1)   
     return (fig,axe)
+
+def plot_all_T(statistics: list, bars: list,title: str = "", digits: int= 2, ylim: list = [0.8,1],margin = 5,width =1) -> list:   
+    fig, axe = plt.subplots(layout='constrained')
+    statistics = [[round(x,digits) for x in y]  for y in statistics]
+    
+    padding = 0.2
+    labels = ["Accuracy","Precision","Recall"]
+    colors = ["#D6C6AD","#D20222","#45666B"]
+
+    count = len(statistics)
+    base_space = np.linspace(-1,1,count)
+    for i in range(count):
+        base = base_space[i]
+        apr = statistics[i]
+        position = (width+padding)*np.linspace(-1,1,3) + margin*base*np.ones(3)
+        rects = axe.bar(position, apr, width, label=labels,color=colors)
+        axe.bar_label(rects, padding=3)
+
+
+    axe.set_xticks(margin*base_space, bars)
+    axe.set_ylim(*ylim) 
+    axe.legend(loc='upper left', ncols=3,labels=labels)
+    factor = 0.8
+    fig.set_size_inches(16*factor, 9*factor, forward=True)
+    axe.set_title(title)
+    
