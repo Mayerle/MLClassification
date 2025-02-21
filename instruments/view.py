@@ -21,9 +21,9 @@ def print_all_per_class(data: list, labels: list) -> None:
         
 def print_all(data: list, label: str) -> None:
         print(label)
-        print(f"Accuracy : {data[0]}")
-        print(f"Precision: {data[1]}")
-        print(f"Recall   : {data[2]}")
+        print(f"Accuracy : {data[0]:.2f}")
+        print(f"Precision: {data[1]:.2f}")
+        print(f"Recall   : {data[2]:.2f}")
         print("\n")
 
 def plot_all(statistics: dict, digits: int) -> list:

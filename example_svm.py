@@ -1,23 +1,10 @@
-import pandas as pd
-from instruments.models import *
+from instruments.linearmodels import *
 from instruments.dftools import *
 from instruments.statistic import *
 from instruments.view import *
+from instruments.datasample import *
 
-#features names and target name
-features_columns = ["SepalLengthCm","SepalWidthCm", "PetalLengthCm",  "PetalWidthCm"]
-target_column = "Species"
-
-#sample data
-df = pd.read_csv("dataset/iris.csv").sample(frac=1,random_state=1)
-objects = df[features_columns]
-targets = df[target_column]
-target_labels = targets.unique()
-objects = normalize_features(objects)
-objects = convert_to_onevectors(objects)
-targets = one_hot_encode(targets)
-
-x_train, x_validate, x_test, y_train, y_validate, y_test = split_data(objects,targets)
+x_train, x_test, y_train, y_test = get_data()
 
 statistics = {}
 

@@ -1,5 +1,4 @@
 import scipy
-from collections import Counter
 import numpy as np
 from abc import ABC
 from instruments.dftools import *
@@ -50,7 +49,8 @@ class ClassificationModel(ABC):
         for target_class in uniques_classes:
             self.normals.append(self.__fit_class(target_class,objects,targets, x0)) 
         return self.normals   
-     
+    
+        
     def predict(self, objects: np.ndarray) -> np.ndarray:
         predictions = np.ndarray(len(objects))
         for i in range(len(objects)):
@@ -73,6 +73,21 @@ class QuadricCModel(ClassificationModel):
             margin = target*np.dot(object,normal)
             _sum += (1-margin)**2
         return _sum   
+    def __normalize(self,onevector):
+        magnitude2 = np.dot(onevector[:-1],onevector[:-1])
+        magnitude = np.sqrt(magnitude2)
+        normal = onevector[:-1]/magnitude
+        return np.array([*normal,onevector[-1]])
+    def predict(self, objects: np.ndarray) -> np.ndarray:
+        predictions = np.ndarray(len(objects))
+        for i in range(len(objects)):
+            projections = []
+            for normal in self.normals:
+                normal = self.__normalize(normal)
+                projections.append(np.dot(normal, objects[i]))
+            best_prediction = np.argmax(projections)
+            predictions[i] = best_prediction
+        return predictions
     
 class LogisticCModel(ClassificationModel):
     
@@ -120,58 +135,3 @@ class SVMCModel(ClassificationModel):
             best_prediction = np.argmax(projections)
             predictions[i] = best_prediction
         return predictions
-
-class KNNClassificationModel(ClassificationModel):
-    def __init__(self, neighbors_n:int = 3, norm: str = "l2"):
-        if(norm == "l1"):
-            self.norm = self.__l1
-        elif(norm == "l2"):
-            self.norm = self.__l2 
-        self.neighbors_n = neighbors_n
-    
-    def fit(self, objects: np.ndarray, targets: np.ndarray):    
-        self.train_objects = objects
-        self.train_targets = targets    
-            
-    def __get_most_frequent(self, arr):
-        freq = []
-        unique = []
-        for x in arr:
-            if(x in unique):
-                index = unique.index(x)
-                freq[index] += 1
-            else:
-                unique.append(x)
-                freq.append(1)
-        max_index = freq.index(max(freq))
-        return unique[max_index]    
-    
-    def __get_distances(self, target_point: np.ndarray, points: np.ndarray):
-        distances = []
-        for point in points:
-            distance = self.norm(point-target_point)
-            distances.append(distance)
-        return distances
-    
-    def __get_neighbors(self, distances:np.ndarray, targets: np.ndarray):
-        pairs = list(zip(distances, targets))
-        pairs.sort(key=lambda x: x[0])
-        return pairs[:self.neighbors]
-        
-    def predict(self, objects: np.ndarray) -> np.ndarray:
-        targets = []
-        for obj in objects:
-            distances = self.__get_distances(obj, self.train_objects)
-            neighbors = self.__get_neighbors(distances, self.train_targets)
-            classes = list(map(lambda x: x[1],neighbors) )
-            
-            target = self.__get_most_frequent(classes)
-            targets.append(target)
-        return np.array(targets)
-    
-    
-            
-                
-     
-        
-   

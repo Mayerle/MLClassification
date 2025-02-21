@@ -44,6 +44,7 @@ class ClassificationStatistics:
         precision = float(np.mean(precisions))
         recall = float(np.mean(recalls))
         return [accuracy,precision, recall]
+    
     def calculate_f_score(self, b: float = 1) -> float:
         precisions = self.calculate_precisions()
         recalls    = self.calculate_recalls()
