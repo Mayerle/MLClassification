@@ -1,4 +1,3 @@
-
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -26,36 +25,26 @@ def print_all(data: list, label: str) -> None:
         print(f"Recall   : {data[2]:.2f}")
         print("\n")
 
-def plot_all(statistics: dict, digits: int) -> list:
-    metrics = ("Accuracy", "Precision", "Recall")
-    statistics_rounded = {}
-    for m, y in statistics.items():
-        statistics_rounded.update({m:[round(k,digits) for k in y]}) 
-        
-    x = np.arange(len(metrics))  # the label locations
-    width = 0.15 
-    multiplier = 0
+def plot_statistic(statistic: list, title: str, digits: int, width: float, ylim=list[float]) -> list:
+    metric_labels = ("Accuracy", "Precision", "Recall")
+    colors = ["#D6C6AD","#D20222","#45666B"]
+    metrics = np.round(statistic,digits)
+    xticks  = np.arange(len(metric_labels)) 
 
     fig, axe = plt.subplots(layout='constrained')
-
-    for model, value in statistics_rounded.items():
-        offset = width * multiplier
-        rects = axe.bar(x + offset, value, width, label=model)
-        axe.bar_label(rects, padding=3)
-        multiplier += 1
+    rects = axe.bar(xticks, metrics, width, color=colors)
+    axe.bar_label(rects, padding=1)
 
     axe.set_ylabel('Metric')
-    axe.set_title('Model comparison')
-    axe.set_xticks(x + width, metrics)
-    axe.legend(loc='upper left', ncols=len(metrics))
-    axe.set_ylim(0.8, 1)   
+    axe.set_title(title)
+    axe.set_xticks(xticks, metric_labels)
+    axe.set_ylim(*ylim)   
     return (fig,axe)
 
-def plot_all_T(statistics: list, bars: list,title: str = "", digits: int= 2, ylim: list = [0.8,1],margin = 5,width =1) -> list:   
+def plot_statistics(statistics: list, bars: list,title: str = "", digits: int= 2, ylim: list = [0.8,1],margin = 5,width =1,padding=0.2) -> list:   
     fig, axe = plt.subplots(layout='constrained')
     statistics = [[round(x,digits) for x in y]  for y in statistics]
     
-    padding = 0.2
     labels = ["Accuracy","Precision","Recall"]
     colors = ["#D6C6AD","#D20222","#45666B"]
 
